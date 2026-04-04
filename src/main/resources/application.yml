@@ -28,6 +28,27 @@ spring:
   config:
     import: "optional:consul:"
   cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:19092}
+        bindings:
+          bookEvents-in-0:
+            consumer:
+              enableDlq: true
+              dlqName: book.dlq
+      bindings:
+        bookEvents-out-0:
+          destination: book
+          content-type: application/json
+        bookEvents-in-0:
+          destination: book
+          group: ${spring.application.name}-group
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 1000
+            back-off-max-interval: 10000
+            back-off-multiplier: 2.0
     consul:
       host: ${CONSUL_HOST:localhost}
       port: 8500

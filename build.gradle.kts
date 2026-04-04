@@ -37,6 +37,9 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-consul-config")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // Event Driven Architecture
+    implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
     
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
@@ -47,6 +50,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("com.epages:restdocs-api-spec-mockmvc:0.19.4")
+    testImplementation("org.testcontainers:kafka")
+    testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
