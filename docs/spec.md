@@ -73,13 +73,15 @@
 }
 ```
 
-## 4. 외부 API 연동: Kakao 도서 검색
+## 4. 외부 API 연동: Naver 도서 검색
 
 ### 연동 정보
 
-* 엔드포인트: `https://dapi.kakao.com/v3/search/book`
-* 인증: `Authorization: KakaoAK {REST_API_KEY}`
-* 검색 파라미터: `query`, `page`, `size`, `target` (title/isbn/publisher/person)
+* 엔드포인트: `https://openapi.naver.com/v1/search/book.json`
+* 인증: 
+    * `X-Naver-Client-Id: {CLIENT_ID}`
+    * `X-Naver-Client-Secret: {CLIENT_SECRET}`
+* 검색 파라미터: `query`, `start`, `display`
 
 ### ExternalBook 인터페이스 (포트)
 
@@ -127,15 +129,16 @@ ID 목록으로 책 정보를 일괄 조회합니다. (microservice-talk에서 �
 server:
   port: 8082
 
-app:
-  kakao:
-    rest-api-key: ${KAKAO_REST_API_KEY}  # Consul Config 또는 환경 변수에서 주입
+naver:
+  api:
+    client-id: ${NAVER_CLIENT_ID}
+    client-secret: ${NAVER_CLIENT_SECRET}
 ```
 
 ## 7. 구현 우선순위
 
 1. Book 도메인 및 JPA 설정
-2. Kakao 도서 검색 API 클라이언트 구현
+2. Naver 도서 검색 API 클라이언트 구현
 3. mergeOrPersist 서비스 로직 구현
 4. 검색 및 상세 조회 API
 5. 내부 API (책 일괄 조회)
