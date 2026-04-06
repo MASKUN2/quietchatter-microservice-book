@@ -28,6 +28,7 @@ dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.5.13"))
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"))
 
+    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -35,6 +36,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.cloud:spring-cloud-starter-consul-discovery")
     implementation("org.springframework.cloud:spring-cloud-starter-consul-config")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 

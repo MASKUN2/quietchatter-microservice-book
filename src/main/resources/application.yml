@@ -9,10 +9,14 @@ spring:
     name: microservice-book
   
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/microservice-book}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/rdb-microservice-book}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
+
+  docker:
+    compose:
+      enabled: false
 
   jpa:
     hibernate:
@@ -28,7 +32,12 @@ spring:
   config:
     import: "optional:consul:"
   cloud:
+    function:
+      autodetect: false
     stream:
+      function:
+        autodetect: false
+        definition: ""
       kafka:
         binder:
           brokers: ${KAFKA_BROKERS:localhost:19092}
@@ -55,3 +64,8 @@ spring:
       discovery:
         service-name: microservice-book
         instance-id: ${spring.application.name}:${server.port}
+
+naver:
+  api:
+    client-id: ${NAVER_CLIENT_ID:placeholder}
+    client-secret: ${NAVER_CLIENT_SECRET:placeholder}
