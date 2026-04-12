@@ -32,6 +32,9 @@ spring:
   config:
     import: "optional:consul:"
   cloud:
+    aws:
+      secretsmanager:
+        enabled: false
     function:
       autodetect: false
     stream:
