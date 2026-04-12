@@ -44,9 +44,9 @@ class NaverBookSearcher(
                     title = item.title,
                     isbn = item.isbn,
                     author = item.author,
-                    thumbnailImage = item.image,
+                    thumbnailImage = item.image ?: "",
                     description = item.description,
-                    externalLink = item.link
+                    externalLink = item.link ?: ""
                 )
             }
 
