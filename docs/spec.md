@@ -14,10 +14,10 @@
 | id | UUID | 기본 키 |
 | title | String | 도서 제목 |
 | isbn | String | ISBN (Unique) |
-| author | String | 저자 |
-| thumbnailImage | String | 썸네일 이미지 URL |
-| description | String | 도서 설명 |
-| externalLink | String | 외부 링크 (Naver 도서 페이지) |
+| author | String? | 저자 (nullable) |
+| thumbnailImageUrl | String? | 썸네일 이미지 URL (nullable) |
+| description | String? | 도서 설명 (nullable) |
+| externalLinkUrl | String? | 외부 링크 (Naver 도서 페이지, nullable) |
 | createdAt | LocalDateTime | 생성일시 |
 | updatedAt | LocalDateTime | 수정일시 |
 
@@ -33,6 +33,24 @@
 * `sort`: 정렬 기준
 
 응답: `Slice<BookResponse>` 형식
+```json
+{
+  "content": [
+    {
+      "id": "uuid",
+      "title": "책 제목",
+      "isbn": "9788966262427",
+      "author": "저자명",
+      "thumbnailImageUrl": "https://...",
+      "description": "책 설명",
+      "externalLinkUrl": "https://..."
+    }
+  ],
+  "hasNext": true,
+  "page": 0,
+  "size": 20
+}
+```
 
 ### GET /v1/books (ID 일괄 조회)
 여러 개의 책 ID(UUID)를 받아 해당 도서 정보를 한꺼번에 조회합니다.
@@ -46,6 +64,17 @@
 특정 ID의 책 상세 정보를 조회합니다.
 
 응답: `BookResponse` 형식
+```json
+{
+  "id": "uuid",
+  "title": "책 제목",
+  "isbn": "9788966262427",
+  "author": "저자명",
+  "thumbnailImageUrl": "https://...",
+  "description": "책 설명",
+  "externalLinkUrl": "https://.."
+}
+```
 
 ### GET /api/v1/spec (OpenAPI 스펙 조회)
 서버에서 관리 중인 `openapi3.yaml` 스펙을 YAML 형식으로 반환합니다.
@@ -95,12 +124,13 @@ data class ExternalBook(
 
 ```yaml
 server:
-  port: 8082
+  port: 8080
 
 naver:
   api:
-    client-id: ${NAVER_CLIENT_ID}
-    client-secret: ${NAVER_CLIENT_SECRET}
+    # Local/Dev 환경은 환경변수 주입, Prod 환경은 AWS Secrets Manager 사용
+    client-id: ${NAVER_CLIENT_ID} 또는 ${quietchatter-naver-client-id}
+    client-secret: ${NAVER_CLIENT_SECRET} 또는 ${quietchatter-naver-client-secret}
 ```
 
 ## 6. 구현 우선순위
