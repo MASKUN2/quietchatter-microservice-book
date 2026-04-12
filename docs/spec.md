@@ -3,7 +3,7 @@
 ## 1. 서비스 역할
 
 책 정보와 관련된 모든 기능을 담당합니다.
-외부 도서 검색 API(Kakao)를 통해 책을 검색하고, 결과를 DB에 캐싱하여 빠른 조회를 지원합니다.
+외부 도서 검색 API(Naver)를 통해 책을 검색하고, 결과를 DB에 캐싱하여 빠른 조회를 지원합니다.
 
 ## 2. 도메인 모델
 
@@ -17,7 +17,7 @@
 | author | String | 저자 |
 | thumbnailImage | String | 썸네일 이미지 URL |
 | description | String | 도서 설명 |
-| externalLink | String | 외부 링크 (Kakao 도서 페이지) |
+| externalLink | String | 외부 링크 (Naver 도서 페이지) |
 | createdAt | LocalDateTime | 생성일시 |
 | updatedAt | LocalDateTime | 수정일시 |
 
@@ -32,7 +32,7 @@
 * `size`: 페이지 크기 (기본값: 20)
 
 처리 흐름:
-1. Kakao 도서 검색 API를 호출하여 결과를 가져옵니다.
+1. Naver 도서 검색 API를 호출하여 결과를 가져옵니다.
 2. 결과의 ISBN을 기준으로 DB와 비교합니다.
 3. DB에 없는 책은 저장하고, 있는 책은 최신 정보로 업데이트합니다.
 4. 병합된 결과를 페이지네이션하여 반환합니다.
@@ -142,3 +142,15 @@ naver:
 3. mergeOrPersist 서비스 로직 구현
 4. 검색 및 상세 조회 API
 5. 내부 API (책 일괄 조회)
+
+## 8. 로깅 및 관찰 가능성
+
+### 외부 API 응답 로깅
+`NaverBookSearcher`에서는 외부 API 요청 후 수신된 원본 응답을 디버그 레벨로 로깅합니다. 장애 발생 시 외부 연동 상태를 확인하는 용도로 활용합니다.
+
+활성화 방법 (`application-local.yml` 등):
+```yaml
+logging:
+  level:
+    com.quietchatter.book.adaptor.out.external: DEBUG
+```
