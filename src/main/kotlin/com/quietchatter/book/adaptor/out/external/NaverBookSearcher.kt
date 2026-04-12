@@ -8,11 +8,11 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.client.RestClient
 
 @Component
 class NaverBookSearcher(
-    @Qualifier("naverWebClient") private val naverClient: WebClient
+    @Qualifier("naverRestClient") private val naverClient: RestClient
 ) : ExternalBookSearcher {
 
     override fun findByKeyword(keyword: Keyword, pageable: Pageable): Slice<ExternalBook> {
@@ -29,8 +29,7 @@ class NaverBookSearcher(
                     .build()
             }
             .retrieve()
-            .bodyToMono(NaverBookSearchResponse::class.java)
-            .block() ?: throw RuntimeException("Failed to fetch from Naver API")
+            .body(NaverBookSearchResponse::class.java) ?: throw RuntimeException("Failed to fetch from Naver API")
 
         val externalBooks = response.items
             .filter { it.isbn.isNotBlank() }
