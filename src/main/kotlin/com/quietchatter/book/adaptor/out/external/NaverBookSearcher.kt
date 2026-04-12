@@ -3,6 +3,7 @@ package com.quietchatter.book.adaptor.out.external
 import com.quietchatter.book.application.`in`.Keyword
 import com.quietchatter.book.application.port.out.ExternalBook
 import com.quietchatter.book.application.port.out.ExternalBookSearcher
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestClient
 class NaverBookSearcher(
     @Qualifier("naverRestClient") private val naverClient: RestClient
 ) : ExternalBookSearcher {
+    private val log = LoggerFactory.getLogger(NaverBookSearcher::class.java)
 
     override fun findByKeyword(keyword: Keyword, pageable: Pageable): Slice<ExternalBook> {
         val pageNumber = pageable.pageNumber
@@ -30,6 +32,10 @@ class NaverBookSearcher(
             }
             .retrieve()
             .body(NaverBookSearchResponse::class.java) ?: throw RuntimeException("Failed to fetch from Naver API")
+
+        if (log.isDebugEnabled) {
+            log.debug("Naver API response for keyword '{}': {}", keyword.value, response)
+        }
 
         val externalBooks = response.items
             .filter { it.isbn.isNotBlank() }
