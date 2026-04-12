@@ -23,55 +23,32 @@
 
 ## 3. API 명세
 
-### GET /v1/books
-키워드로 책을 검색합니다.
+### GET /v1/books (키워드 검색)
+키워드로 책을 검색합니다. (네이버 API 연동 및 DB 캐싱)
 
 쿼리 파라미터:
 * `keyword` (필수): 검색 키워드
 * `page`: 페이지 번호 (기본값: 0)
 * `size`: 페이지 크기 (기본값: 20)
+* `sort`: 정렬 기준
 
-처리 흐름:
-1. Naver 도서 검색 API를 호출하여 결과를 가져옵니다.
-2. 결과의 ISBN을 기준으로 DB와 비교합니다.
-3. DB에 없는 책은 저장하고, 있는 책은 최신 정보로 업데이트합니다.
-4. 병합된 결과를 페이지네이션하여 반환합니다.
+응답: `Slice<BookResponse>` 형식
 
-응답:
-```json
-{
-  "content": [
-    {
-      "id": "uuid",
-      "title": "책 제목",
-      "isbn": "9788966262427",
-      "author": "저자명",
-      "thumbnailImage": "https://...",
-      "description": "책 설명",
-      "externalLink": "https://..."
-    }
-  ],
-  "hasNext": true,
-  "page": 0,
-  "size": 20
-}
-```
+### GET /v1/books (ID 일괄 조회)
+여러 개의 책 ID(UUID)를 받아 해당 도서 정보를 한꺼번에 조회합니다.
 
-### GET /v1/books/{bookId}
+쿼리 파라미터:
+* `id` (필수, 중복 가능): 조회할 책의 UUID 리스트 (예: `?id=uuid1&id=uuid2`)
+
+응답: `List<BookResponse>` 형식
+
+### GET /v1/books/{bookId} (단일 상세 조회)
 특정 ID의 책 상세 정보를 조회합니다.
 
-응답:
-```json
-{
-  "id": "uuid",
-  "title": "책 제목",
-  "isbn": "9788966262427",
-  "author": "저자명",
-  "thumbnailImage": "https://...",
-  "description": "책 설명",
-  "externalLink": "https://.."
-}
-```
+응답: `BookResponse` 형식
+
+### GET /api/v1/spec (OpenAPI 스펙 조회)
+서버에서 관리 중인 `openapi3.yaml` 스펙을 YAML 형식으로 반환합니다.
 
 ## 4. 외부 API 연동: Naver 도서 검색
 
@@ -114,16 +91,7 @@ data class ExternalBook(
 5. 병합된 Slice<Book> 반환
 ```
 
-## 5. 내부 API (서비스 간 통신용)
-
-### GET /internal/books
-ID 목록으로 책 정보를 일괄 조회합니다. (microservice-talk에서 사용)
-
-쿼리 파라미터: `ids` (UUID 목록, 쉼표 구분)
-
-응답: Book 목록 (배열)
-
-## 6. 설정 구조
+## 5. 설정 구조
 
 ```yaml
 server:
@@ -135,15 +103,15 @@ naver:
     client-secret: ${NAVER_CLIENT_SECRET}
 ```
 
-## 7. 구현 우선순위
+## 6. 구현 우선순위
 
 1. Book 도메인 및 JPA 설정
 2. Naver 도서 검색 API 클라이언트 구현
 3. mergeOrPersist 서비스 로직 구현
-4. 검색 및 상세 조회 API
-5. 내부 API (책 일괄 조회)
+4. 검색 및 상세 조회 API (일괄 조회 포함)
+5. OpenAPI 스펙 서버 구현
 
-## 8. 로깅 및 관찰 가능성
+## 7. 로깅 및 관찰 가능성
 
 ### 외부 API 응답 로깅
 `NaverBookSearcher`에서는 외부 API 요청 후 수신된 원본 응답을 디버그 레벨로 로깅합니다. 장애 발생 시 외부 연동 상태를 확인하는 용도로 활용합니다.
