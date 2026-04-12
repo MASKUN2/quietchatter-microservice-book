@@ -8,7 +8,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.SliceImpl
@@ -20,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
-@WebMvcTest(controllers = [BookApi::class], excludeAutoConfiguration = [SecurityAutoConfiguration::class])
+@WebMvcTest(controllers = [BookApi::class])
 class BookApiTest {
 
     @Autowired

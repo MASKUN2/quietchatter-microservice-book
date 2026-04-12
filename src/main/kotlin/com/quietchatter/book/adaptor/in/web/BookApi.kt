@@ -33,13 +33,6 @@ class BookApi(
         return ResponseEntity.ok(responses)
     }
 
-    @GetMapping("/internal/books")
-    fun getInternalByIds(@RequestParam(name = "ids") ids: List<UUID>): ResponseEntity<List<BookResponse>> {
-        val books = bookQueryable.findBy(ids)
-        val responses = books.map { BookResponse.from(it) }
-        return ResponseEntity.ok(responses)
-    }
-
     @GetMapping("/{bookId}")
     fun getDetail(@PathVariable(name = "bookId") bookId: UUID): ResponseEntity<BookResponse> {
         val book = bookQueryable.findBy(bookId)
