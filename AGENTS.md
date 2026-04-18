@@ -68,7 +68,15 @@ com.quietchatter.book/
 * 모든 기능 구현 시 단위 테스트와 API 문서화 테스트를 병행해야 합니다.
 * 환경 설정 오류로 인한 테스트 실패 방지를 위해 레거시의 `src/test/resources/application.yml` 설정을 참고하십시오.
 
-### E. 문서 및 환경 설정
+### E. 메시징 및 이벤트 처리 규칙
+
+* 모든 외부 이벤트 발행은 트랜잭셔널 아웃박스(Transactional Outbox) 패턴을 따릅니다.
+* 이벤트 직렬화 포맷은 Apache Avro를 사용하며, Redpanda Schema Registry와 연동됩니다.
+* 스키마 정의는 `src/main/avro/` 경로에 `.avsc` 파일로 관리합니다.
+* 스키마 변경 시 `./gradlew generateAvroJava` 명령을 실행하여 최신 도메인 객체를 생성해야 합니다.
+* 발행되는 메시지의 페이로드는 자동 생성된 Avro 클래스 인스턴스를 사용하십시오.
+
+### F. 문서 및 환경 설정
 
 * Naver API 연동 구현 시 `adaptor/out`에 구현하고, `ExternalBookSearcher` 포트 인터페이스를 통해 사용하십시오.
 * API Key 등 민감 정보는 레거시의 설정을 참고하여 외부 주입(Consul/Env) 방식으로 처리하십시오.
