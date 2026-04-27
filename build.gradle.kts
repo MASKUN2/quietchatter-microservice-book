@@ -7,7 +7,6 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
     id("com.epages.restdocs-api-spec") version "0.19.4"
-    id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1"
 }
 
 group = "com.quietchatter"
@@ -21,7 +20,6 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://packages.confluent.io/maven/") }
 }
 
 val springCloudVersion = "2025.0.2"
@@ -43,8 +41,6 @@ dependencies {
 
     // Event Driven Architecture
     implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
-    implementation("io.confluent:kafka-avro-serializer:7.5.0")
-    implementation("org.apache.avro:avro:1.11.3")
 
     // AWS Secrets Manager
     implementation("io.awspring.cloud:spring-cloud-aws-starter-secrets-manager")
@@ -60,11 +56,6 @@ dependencies {
     testImplementation("org.testcontainers:kafka")
     testImplementation("org.testcontainers:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-avro {
-    isCreateSetters.set(false)
-    fieldVisibility.set("PRIVATE")
 }
 
 tasks.withType<KotlinCompile> {
