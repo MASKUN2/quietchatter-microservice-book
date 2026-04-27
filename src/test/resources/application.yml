@@ -6,8 +6,6 @@ naver:
 spring:
   application:
     name: microservice-book-test
-  config:
-    import: "" # Consul import 제거
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -19,10 +17,3 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-  cloud:
-    consul:
-      enabled: false
-      discovery:
-        enabled: false
-      config:
-        enabled: false

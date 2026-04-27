@@ -29,8 +29,6 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
-  config:
-    import: "optional:consul:"
   cloud:
     aws:
       secretsmanager:
@@ -64,12 +62,6 @@ spring:
             back-off-initial-interval: 1000
             back-off-max-interval: 10000
             back-off-multiplier: 2.0
-    consul:
-      host: ${CONSUL_HOST:localhost}
-      port: 8500
-      discovery:
-        service-name: microservice-book
-        instance-id: ${spring.application.name}:${server.port}
 
 naver:
   api:
