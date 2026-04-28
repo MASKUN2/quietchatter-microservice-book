@@ -23,7 +23,7 @@
 
 ## 3. API 명세
 
-### GET /v1/books (키워드 검색)
+### GET /api/books (키워드 검색)
 키워드로 책을 검색합니다. (네이버 API 연동 및 DB 캐싱)
 
 쿼리 파라미터:
@@ -52,7 +52,7 @@
 }
 ```
 
-### GET /v1/books (ID 일괄 조회)
+### GET /api/books (ID 일괄 조회)
 여러 개의 책 ID(UUID)를 받아 해당 도서 정보를 한꺼번에 조회합니다.
 
 쿼리 파라미터:
@@ -60,7 +60,7 @@
 
 응답: `List<BookResponse>` 형식
 
-### GET /v1/books/{bookId} (단일 상세 조회)
+### GET /api/books/{bookId} (단일 상세 조회)
 특정 ID의 책 상세 정보를 조회합니다.
 
 응답: `BookResponse` 형식

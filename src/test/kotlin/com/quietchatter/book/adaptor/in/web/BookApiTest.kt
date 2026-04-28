@@ -42,7 +42,7 @@ class BookApiTest {
 
         // when & then
         mockMvc.perform(
-            get("/v1/books/{bookId}", bookId)
+            get("/api/books/{bookId}", bookId)
                 .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
@@ -67,7 +67,7 @@ class BookApiTest {
 
         // when & then
         mockMvc.perform(
-            get("/v1/books")
+            get("/api/books")
                 .param("keyword", keyword)
                 .param("page", "0")
                 .param("size", "10")

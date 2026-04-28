@@ -47,7 +47,7 @@ com.quietchatter.book/
 
 ### B. API 설계
 
-- API 경로는 레거시의 최신 반영분인 /v1/books 형식을 따르며, kebab-case URI와 camelCase JSON 필드명을 사용합니다.
+* API 경로는 레거시의 최신 반영분인 /api/books 형식을 따르며, kebab-case URI와 camelCase JSON 필드명을 사용합니다.
 - 에러 처리는 레거시의 WebExceptionHandler 및 ProblemDetail(RFC 7807) 방식을 참고하여 표준화하십시오.
 
 ### C. 데이터베이스 및 Flyway

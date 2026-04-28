@@ -60,7 +60,7 @@ com.quietchatter.book/
 ### C. 아키텍처 및 API 설계
 
 * 레거시와 동일하게 헥사고날 아키텍처를 유지하며, 의존성 방향(Adapter -> Application -> Domain)을 준수하십시오.
-* API 경로는 레거시의 최신 반영분인 /v1/books 형식을 따르며, kebab-case URI와 camelCase JSON 필드명을 사용합니다.
+* API 경로는 레거시의 최신 반영분인 /api/books 형식을 따르며, kebab-case URI와 camelCase JSON 필드명을 사용합니다.
 * 에러 처리는 레거시의 WebExceptionHandler 및 ProblemDetail(RFC 7807) 방식을 참고하여 표준화하십시오.
 
 ### D. 데이터베이스 및 Flyway
