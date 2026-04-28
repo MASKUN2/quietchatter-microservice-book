@@ -1,78 +1,28 @@
 # CLAUDE.md - microservice-book
 
-이 문서는 Claude Code가 microservice-book 프로젝트를 이해하고 개발을 돕기 위한 지침입니다.
+작업 전 README.md를 읽으십시오. 서비스 개요, 기술 스택, API 명세, 캐싱 병합 로직은 README.md에 있습니다.
 
-루트 프로젝트의 CLAUDE.md에 정의된 공통 원칙(헥사고날 아키텍처, Kotlin 규칙, EDA 설계, 문서 작성 규칙 등)을 먼저 확인하십시오.
+루트 프로젝트의 CLAUDE.md에 정의된 공통 원칙도 확인하십시오.
 
-## 1. 서비스 개요
-
-- 역할: 책 정보 조회, 외부 도서 API 연동, DB 캐싱
-- 담당 레거시 패키지: book
-- 포트: 8080
-
-## 2. 기술 스택
-
-- 언어: Kotlin 1.9.x
-- 프레임워크: Spring Boot 3.5.13
-- 데이터베이스: PostgreSQL (JPA로 책 정보 캐싱)
-- 외부 API: Naver 도서 검색 API
-- 의존성: spring-boot-starter-web, data-jpa, consul-discovery, consul-config
-
-## 3. 아키텍처
-
-헥사고날 아키텍처(Ports and Adapters)를 사용합니다.
-
-패키지 구조 예시:
-
-```
-com.quietchatter.book/
-  domain/          Book.kt
-  application/
-    in/            BookQueryable.kt, Keyword.kt
-    out/           BookRepository.kt, ExternalBookSearcher.kt
-  adaptor/
-    in/            BookController.kt, BookResponse.kt
-    out/           BookJpaRepository.kt, NaverBookSearchClient.kt
-```
-
-## 4. 작업 지침
-
-모든 작업 시작 전 및 작업 중에 superpowers 스킬 목록을 항상 확인하고 상황에 맞는 스킬을 활성화하여 사용하십시오.
+## 작업 지침
 
 ### A. 레거시 참조 및 포팅 규칙
 
-- 반드시 legacy-quiet-chatter 의 구현 방식, 패키지 구조, 테스트 패턴을 최우선으로 참고하십시오.
-- 레거시의 Java 코드를 idiomatic Kotlin 코드로 변환하되, 핵심 비즈니스 로직(특히 BookQueryService의 mergeOrPersist)은 레거시의 동작 방식을 엄격히 따릅니다.
-- 레거시의 book/ 패키지뿐만 아니라 persistence/BaseEntity.java, web/WebExceptionHandler.java 등 공통 관심사 구현 방식도 참고하십시오.
+- 레거시의 book/ 패키지 구현 방식과 테스트 패턴을 최우선으로 참고하십시오.
+- mergeOrPersist 핵심 비즈니스 로직은 레거시의 동작 방식을 엄격히 따릅니다.
+- 레거시의 persistence/BaseEntity.java, web/WebExceptionHandler.java 등 공통 관심사 구현 방식도 참고하십시오.
 
-### B. API 설계
+### B. 데이터베이스 및 Flyway
 
-* API 경로는 레거시의 최신 반영분인 /api/books 형식을 따르며, kebab-case URI와 camelCase JSON 필드명을 사용합니다.
-- 에러 처리는 레거시의 WebExceptionHandler 및 ProblemDetail(RFC 7807) 방식을 참고하여 표준화하십시오.
+- 스키마 변경 시 src/main/resources/db/migration에 Flyway 스크립트를 작성하십시오.
+- 레거시의 Book.java 인덱스 설정(idx_book_isbn, idx_book_title)을 포함하십시오.
 
-### C. 데이터베이스 및 Flyway
+### C. 테스트 및 검증
 
-- 데이터베이스 스키마 변경 시 레거시의 src/main/resources/db/migration 구조를 참고하여 Flyway 스크립트를 작성하십시오.
-- 엔티티 정의 시 레거시의 Book.java 인덱스 설정(idx_book_isbn, idx_book_title)을 반드시 포함하십시오.
+- 레거시의 BookApiTest.java, BookQueryServiceTest.java의 RestDocs 및 Mocking 패턴을 적용하십시오.
+- 모든 기능 구현 시 단위 테스트와 API 문서화 테스트를 병행하십시오.
 
-### D. 테스트 및 검증
+### D. 메시징 규칙
 
-- 레거시의 BookApiTest.java, BookQueryServiceTest.java 등에서 사용된 Test-Driven Documentation(RestDocs) 및 Mocking 패턴을 그대로 적용하십시오.
-- 모든 기능 구현 시 단위 테스트와 API 문서화 테스트를 병행해야 합니다.
-- 환경 설정 오류로 인한 테스트 실패 방지를 위해 레거시의 src/test/resources/application.yml 설정을 참고하십시오.
-
-### E. 메시징 및 이벤트 처리
-
-- 모든 외부 이벤트 발행은 트랜잭셔널 아웃박스(Transactional Outbox) 패턴을 따릅니다.
-- 이벤트 직렬화 포맷은 Apache Avro를 사용하며, Redpanda Schema Registry와 연동됩니다.
-- 스키마 정의는 src/main/avro/ 경로에 .avsc 파일로 관리합니다.
-- 스키마 변경 시 ./gradlew generateAvroJava 명령을 실행하여 최신 도메인 객체를 생성해야 합니다.
-
-### F. 외부 API 연동
-
-- Naver API 연동 구현 시 adaptor/out에 구현하고, ExternalBookSearcher 포트 인터페이스를 통해 사용하십시오.
-- API Key 등 민감 정보는 레거시의 설정을 참고하여 외부 주입(Consul/Env) 방식으로 처리하십시오.
-
-## 5. 구현 스펙 참조
-
-docs/spec.md 를 반드시 읽고 작업을 시작하십시오.
+- 모든 이벤트 발행은 Transactional Outbox 패턴을 따른다.
+- 이벤트 직렬화: flattened JSON. 메타데이터 필드에는 evt_ 접두어를 사용하십시오.
