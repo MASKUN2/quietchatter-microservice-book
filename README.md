@@ -34,7 +34,7 @@ com.quietchatter.book/
 | GET | /api/books?keyword= | 키워드로 도서 검색 (Naver API + DB 캐싱). 응답: Slice<BookResponse> |
 | GET | /api/books?id=&id= | 복수 ID 일괄 조회. 응답: List<BookResponse> |
 | GET | /api/books/{bookId} | 단일 도서 상세 조회 |
-| GET | /api/v1/spec | OpenAPI 스펙 YAML 반환 |
+| GET | /api/spec | OpenAPI 스펙 YAML 반환 |
 
 ## 도메인 모델
 
@@ -52,17 +52,23 @@ Book: id(UUID), title, isbn(unique), author?, thumbnailImageUrl?, description?, 
 
 ## 환경변수 및 보안
 
-모든 민감 정보는 k8s Secret(`quietchatter-secrets`)으로부터 환경 변수로 주입됩니다.
+모든 민감 정보는 k8s Secret(quietchatter-secrets)으로부터 환경 변수로 주입됩니다.
 
-| 변수 | 용도 | 비고 |
+| 변수명 | 용도 | 비고 |
 |---|---|---|
-| NAVER_CLIENT_ID | Naver 도서 검색 API Client ID | AWS Secrets Manager 통합 주입 |
-| NAVER_CLIENT_SECRET | Naver 도서 검색 API Client Secret | AWS Secrets Manager 통합 주입 |
-| INTERNAL_SECRET | 서비스 간 통신용 공유 비밀키 | /internal/** 검증용 (구현 시 사용) |
-| DB_URL, DB_USERNAME, DB_PASSWORD | PostgreSQL 접속 정보 | |
-| KAFKA_BROKERS | Redpanda 브로커 주소 | |
+| SERVER_PORT | 서비스 포트 번호 | k8s: 8081 |
+| DB_URL | PostgreSQL 접속 URL | |
+| DB_USERNAME | PostgreSQL 사용자명 | |
+| DB_PASSWORD | PostgreSQL 비밀번호 | |
+| NAVER_CLIENT_ID | Naver 도서 검색 API Client ID | |
+| NAVER_CLIENT_SECRET | Naver 도서 검색 API Client Secret | |
+| INTERNAL_SECRET | 서비스 간 통신용 공유 비밀키 | |
+| KAFKA_BROKERS | Kafka 브로커 목록 | |
+| SPRING_DATA_REDIS_HOST | Redis 호스트 주소 | |
+| SPRING_DATA_REDIS_PORT | Redis 포트 번호 | |
+| SPRING_PROFILES_ACTIVE | 활성 프로파일 | prod |
 
-> **주의**: Spring Cloud AWS Secrets Manager 의존성은 제거되었습니다. 모든 시크릿은 k8s 환경 변수(`env`)를 통해 참조하십시오.
+주의: Spring Cloud AWS Secrets Manager 의존성은 제거되었습니다. 모든 시크릿은 k8s 환경 변수(env)를 통해 참조하십시오.
 
 ## 로컬 실행
 
