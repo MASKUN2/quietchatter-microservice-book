@@ -2,15 +2,3 @@ spring:
   config:
     activate:
       on-profile: prod
-    import:
-      - "aws-secretsmanager:quietchatter-naver-client-id"
-      - "aws-secretsmanager:quietchatter-naver-client-secret"
-  cloud:
-    aws:
-      secretsmanager:
-        enabled: true
-
-naver:
-  api:
-    client-id: ${quietchatter-naver-client-id}
-    client-secret: ${quietchatter-naver-client-secret}
