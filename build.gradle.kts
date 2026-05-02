@@ -23,12 +23,10 @@ repositories {
 }
 
 val springCloudVersion = "2025.0.2"
-val springCloudAwsVersion = "3.4.2"
 
 dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.5.13"))
     implementation(platform("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"))
-    implementation(platform("io.awspring.cloud:spring-cloud-aws-dependencies:$springCloudAwsVersion"))
 
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -42,9 +40,6 @@ dependencies {
     // Event Driven Architecture
     implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
 
-    // AWS Secrets Manager
-    implementation("io.awspring.cloud:spring-cloud-aws-starter-secrets-manager")
-    
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
 
