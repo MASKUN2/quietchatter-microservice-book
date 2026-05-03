@@ -11,6 +11,7 @@
 - 레거시의 book/ 패키지 구현 방식과 테스트 패턴을 최우선으로 참고하십시오.
 - mergeOrPersist 핵심 비즈니스 로직은 레거시의 동작 방식을 엄격히 따릅니다.
 - 레거시의 persistence/BaseEntity.java, web/WebExceptionHandler.java 등 공통 관심사 구현 방식도 참고하십시오.
+- 파일 치환(replace) 시 퍼지 매칭(Fuzzy Match)으로 인한 의도치 않은 코드 삭제를 막기 위해, 항상 파일 원본을 먼저 읽고 정확한 대상 문자열을 지정하십시오.
 
 ### B. 데이터베이스 및 Flyway
 
