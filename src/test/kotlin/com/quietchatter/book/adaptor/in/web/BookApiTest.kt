@@ -42,12 +42,16 @@ class BookApiTest {
     fun `특정 ID로 책 상세 정보를 조회한다`() {
         // given
         val bookId = UUID.randomUUID()
-        val book = Book.newOf("Test Book", "1234567890")
-        
+        val book = Book.newOf("Test Book Title", "1234567890123")
+        book.updateAuthor("Test Author")
+        book.updateThumbnailImage("https://example.com/thumbnail.jpg")
+        book.updateDescription("A test book description")
+        book.updateExternalLink("https://shopping.naver.com/book/1234567890123")
+
         val idField = com.quietchatter.book.domain.BaseEntity::class.java.getDeclaredField("id")
         idField.isAccessible = true
         idField.set(book, bookId)
-        
+
         whenever(bookQueryable.findBy(eq(bookId))).thenReturn(book)
 
         // when & then
@@ -57,8 +61,8 @@ class BookApiTest {
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(bookId.toString()))
-            .andExpect(jsonPath("$.title").value("Test Book"))
-            .andExpect(jsonPath("$.isbn").value("1234567890"))
+            .andExpect(jsonPath("$.title").value("Test Book Title"))
+            .andExpect(jsonPath("$.isbn").value("1234567890123"))
             .andDo(
                 document(
                     "get-book-detail",
@@ -90,12 +94,16 @@ class BookApiTest {
         // given
         val keyword = "Test"
         val bookId = UUID.randomUUID()
-        val book = Book.newOf("Test Book", "1234567890")
-        
+        val book = Book.newOf("Test Book Title", "1234567890123")
+        book.updateAuthor("Test Author")
+        book.updateThumbnailImage("https://example.com/thumbnail.jpg")
+        book.updateDescription("A test book description")
+        book.updateExternalLink("https://shopping.naver.com/book/1234567890123")
+
         val idField = com.quietchatter.book.domain.BaseEntity::class.java.getDeclaredField("id")
         idField.isAccessible = true
         idField.set(book, bookId)
-        
+
         val slice = SliceImpl(listOf(book))
 
         whenever(bookQueryable.findBy(any<Keyword>(), any<Pageable>())).thenReturn(slice)
@@ -109,8 +117,8 @@ class BookApiTest {
                 .accept(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content[0].title").value("Test Book"))
-            .andExpect(jsonPath("$.content[0].isbn").value("1234567890"))
+            .andExpect(jsonPath("$.content[0].title").value("Test Book Title"))
+            .andExpect(jsonPath("$.content[0].isbn").value("1234567890123"))
             .andDo(
                 document(
                     "search-books",
@@ -143,6 +151,56 @@ class BookApiTest {
                                 fieldWithPath("empty").description("Is empty")
                             )
                             .responseSchema(Schema.schema("BookSliceResponse"))
+                            .build()
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `ID 목록으로 책들을 조회한다`() {
+        // given
+        val bookId = UUID.randomUUID()
+        val book = Book.newOf("Test Book Title", "1234567890123")
+        book.updateAuthor("Test Author")
+        book.updateThumbnailImage("https://example.com/thumbnail.jpg")
+        book.updateDescription("A test book description")
+        book.updateExternalLink("https://shopping.naver.com/book/1234567890123")
+
+        val idField = com.quietchatter.book.domain.BaseEntity::class.java.getDeclaredField("id")
+        idField.isAccessible = true
+        idField.set(book, bookId)
+
+        whenever(bookQueryable.findBy(listOf(bookId))).thenReturn(listOf(book))
+
+        // when & then
+        mockMvc.perform(
+            get("/api/books")
+                .param("id", bookId.toString())
+                .accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].id").value(bookId.toString()))
+            .andDo(
+                document(
+                    "get-books-by-ids",
+                    resource(
+                        ResourceSnippetParameters.builder()
+                            .tag("Books")
+                            .description("Get a list of books by their IDs")
+                            .queryParameters(
+                                parameterWithName("id").description("Comma-separated list of book IDs")
+                            )
+                            .responseFields(
+                                fieldWithPath("[].id").description("Book ID"),
+                                fieldWithPath("[].title").description("Book Title"),
+                                fieldWithPath("[].isbn").description("Book ISBN"),
+                                fieldWithPath("[].author").description("Author (optional)").optional(),
+                                fieldWithPath("[].thumbnailImageUrl").description("Thumbnail Image URL (optional)").optional(),
+                                fieldWithPath("[].description").description("Description (optional)").optional(),
+                                fieldWithPath("[].externalLinkUrl").description("External Link URL (optional)").optional()
+                            )
+                            .responseSchema(Schema.schema("BookListResponse"))
                             .build()
                     )
                 )
